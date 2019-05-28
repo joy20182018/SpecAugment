@@ -1,33 +1,33 @@
 clc
 clear
-filepath = 'D:\matlabproject\hmm\TRAIN1\0a.wav'; % ¿ÉÒÔ°´×Ô¼ºµÄÂ·¾¶ÉèÖÃ
+filepath = 'D:\matlabproject\hmm\TRAIN1\0a.wav'; % å¯ä»¥æŒ‰è‡ªå·±çš„è·¯å¾„è®¾ç½®
 [X, fs] = audioread(filepath);
-x_mel_graph = mfcc_m(X,fs, 24, 160, 80);  % ÇómelÏµÊı
-[R, C] = size(x_mel_graph); % »ñÈ¡Í¼Ïñ´óĞ¡
+x_mel_graph = mfcc_m(X,fs, 24, 160, 80);  % æ±‚melç³»æ•°
+[R, C] = size(x_mel_graph); % è·å–å›¾åƒå¤§å°
 subplot(511);
 image(x_mel_graph);
 title('initial mel image');
 
 % Time Warping
-% Í¼ÏñÏòÓÒÒÆÎ»,ÆäÓà²¿·ÖÓÉËæ»úÔëÉùÌî³ä
-% R:Ê±¼äÖá C:ÆµÂÊÖá
-X_Time_Warping = zeros(R, C); % ´´½¨Ò»¸öÓëÔ­Í¼Ïñ´óĞ¡ÏàÍ¬µÄÁã¾ØÕó
-t = 30; % Ê±¼äÆ½ÒÆÁ¿
-dx = 0; % xµÄÆ½ÒÆÁ¿
-dy = t; % yµÄÆ½ÒÆÁ¿
-trans = [1, 0, 0; 0, 1, 0; dy, dx, 1]; % Æ½ÒÆ×ªÒÆ¾ØÕó
+% å›¾åƒå‘å³ç§»ä½,å…¶ä½™éƒ¨åˆ†ç”±éšæœºå™ªå£°å¡«å……
+% R:æ—¶é—´è½´ C:é¢‘ç‡è½´
+X_Time_Warping = zeros(R, C); % åˆ›å»ºä¸€ä¸ªä¸åŸå›¾åƒå¤§å°ç›¸åŒçš„é›¶çŸ©é˜µ
+t = 30; % æ—¶é—´å¹³ç§»é‡
+dx = 0; % xçš„å¹³ç§»é‡
+dy = t; % yçš„å¹³ç§»é‡
+trans = [1, 0, 0; 0, 1, 0; dy, dx, 1]; % å¹³ç§»è½¬ç§»çŸ©é˜µ
 t = zeros(2, R);
-randnum = -0.5 + rand(dy, C - dx); % ²úÉú-1µ½1¼äµÄ¸ßË¹Ëæ»úÊı,ÓÃÓÚÌî³äÍ¼ÏñÆ½ÒÆÈ±Ê§¿é£¬³äµ±ÔëÉù
+randnum = -0.5 + rand(dy, C - dx); % äº§ç”Ÿ-1åˆ°1é—´çš„é«˜æ–¯éšæœºæ•°,ç”¨äºå¡«å……å›¾åƒå¹³ç§»ç¼ºå¤±å—ï¼Œå……å½“å™ªå£°
 for k = 1: R
     for m = 1: C
-        init = [k, m, 1];   % Ô­Ê¼Í¼ÏñÖĞÃ¿¸öµãµÄÎ»ÖÃ
-        init = init * trans;   % Æ½ÒÆÖ®ºóµÄÍ¼ÏñµÄµãµÄÎ»ÖÃ
+        init = [k, m, 1];   % åŸå§‹å›¾åƒä¸­æ¯ä¸ªç‚¹çš„ä½ç½®
+        init = init * trans;   % å¹³ç§»ä¹‹åçš„å›¾åƒçš„ç‚¹çš„ä½ç½®
         
         x = init(1, 1);
         y = init(1, 2);
-        % ¸³Öµ²Ù×÷
-        if (x <= R) && (y <= C)  && (x >=1) && (y >= 1)  % ÅĞ¶Ï¸ÃµãÊÇ·ñÒÑ¾­³¬³öÍ¼ÏñÏÔÊ¾·¶Î§
-            X_Time_Warping(x, y) = x_mel_graph(k, m);  % ½«Ô­Í¼ÏñµÄµã×ªÒÆµ½ÏÖÔÚÍ¼ÏñµÄµã
+        % èµ‹å€¼æ“ä½œ
+        if (x <= R) && (y <= C)  && (x >=1) && (y >= 1)  % åˆ¤æ–­è¯¥ç‚¹æ˜¯å¦å·²ç»è¶…å‡ºå›¾åƒæ˜¾ç¤ºèŒƒå›´
+            X_Time_Warping(x, y) = x_mel_graph(k, m);  % å°†åŸå›¾åƒçš„ç‚¹è½¬ç§»åˆ°ç°åœ¨å›¾åƒçš„ç‚¹
         end
         
         if (k <= dy) && (m <= C - dx)
@@ -41,7 +41,7 @@ title('Time Warping');
 
 
 % Frequency masking
-Frequency_mask = [14, 19]; % ÆµÂÊÑÚ±ÎµÄ·¶Î§
+Frequency_mask = [14, 19]; % é¢‘ç‡æ©è”½çš„èŒƒå›´
 X_Frequency_masking = zeros(R, C);
 for k = 1: R
     for m = 1: C
@@ -56,7 +56,7 @@ title('Frequency masking');
 
 
 % Time masking
-Time_masking = [20, 30]; % Ê±¼äÑÚ±ÎµÄ·¶Î§
+Time_masking = [20, 30]; % æ—¶é—´æ©è”½çš„èŒƒå›´
 X_Time_masking = zeros(R, C);
 for k = 1: R
     for m = 1: C
@@ -70,7 +70,7 @@ image(X_Time_masking')
 title('Time masking');
 
 % Time and Frequency masking
-Time_Frequency_masking = [20, 30, 14, 18]; % Ê±¼äºÍÆµÂÊÑÚ±ÎµÄ·¶Î§
+Time_Frequency_masking = [20, 30, 14, 18]; % æ—¶é—´å’Œé¢‘ç‡æ©è”½çš„èŒƒå›´
 X_Time_Frequency_masking = zeros(R, C);
 for k = 1: R
     for m = 1: C
