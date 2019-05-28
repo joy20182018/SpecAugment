@@ -1,0 +1,2 @@
+# SpecAugment
+对谷歌最新的论文SpecAugment使用matlab复现
